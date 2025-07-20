@@ -1,0 +1,48 @@
+#!/bin/bash
+
+cd ../../
+git submodule update --init
+cd axmol
+git clean -xdf
+1k/install-pwsh.sh
+pwsh setup.ps1
+
+# Function to install ccache on macOS using brew
+install_ccache_mac() {
+  if ! command -v brew &> /dev/null; then
+    echo "Homebrew not found. Installing Homebrew first."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+
+  echo "Installing ccache using Homebrew."
+  brew install ccache
+
+  echo "Installing cmake using Homebrew."
+  brew install cmake
+
+  echo "Installing ninja using Homebrew."
+  brew install ninja
+}
+
+# Function to install ccache on Linux using apt
+install_ccache_linux() {
+  echo "Updating package list."
+  sudo apt-get update
+
+  echo "Installing ccache using apt."
+  sudo apt-get install -y ccache
+}
+
+# Detect the OS and call the appropriate function
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Detected macOS."
+  install_ccache_mac
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  echo "Detected Linux."
+  install_ccache_linux
+else
+  echo "Unsupported OS: $OSTYPE"
+  exit 1
+fi
+
+echo "ccache installation completed."

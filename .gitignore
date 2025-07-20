@@ -1,0 +1,70 @@
+# Axmol Project Ignore Rules
+
+# Build folders
+build/
+bin/
+obj/
+*.o
+*.obj
+*.so
+*.dll
+*.exe
+*.apk
+*.ipa
+*.xcodeproj/project.xcworkspace/
+*.xcworkspace
+*.xcuserstate
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.ninja
+.ninja_deps
+.ninja_log
+compile_commands.json
+
+# IDE specific
+*.user
+*.suo
+*.vcxproj.*
+*.opensdf
+*.sdf
+*.log
+
+# Xcode
+*.xcuserdatad
+*.xcworkspace
+*.xcsettings
+*.DS_Store
+
+# Android
+.gradle/
+.local.properties
+.idea/
+*.iml
+build/
+*.log
+.cxx/
+*.keystore
+
+# Axmol Engine
+engine/prebuilt/
+engine/bin/
+engine/build/
+engine/thirdparty/build/
+
+# Cache
+*.tmp
+*.cache
+*.db
+
+# Python / VS Code / Others
+__pycache__/
+.vscode/
+*.pyc
+
+# Mac specific
+.DS_Store
+build_ios_arm64_sim/

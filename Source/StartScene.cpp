@@ -8,8 +8,10 @@
 #include "ui/CocosGUI.h"
 #include "StartScene.h"
 #include "MainScene.h"
+#include "../TestScene.h"
 #include "BotDriver.h"
-
+#include "../BotAlgorithms/MiniMaxBot.h"
+#include "../WebSocketManager.h"
 
 using namespace ax;
 
@@ -34,7 +36,8 @@ bool StartScene::init()
     startButton->addClickEventListener([](Object* sender) {
         printf("change event fired");
         auto dir = Director:: getInstance();
-        auto ms = MainScene:: create();
+        auto ms = TestScene:: create();
+        
         ms->setGameDriver( new GameDriver());
         dir->replaceScene(ms);
         
@@ -52,10 +55,16 @@ bool StartScene::init()
         printf("change event fired");
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
-        ms->setGameDriver( new BotDriver());
+        BotAlgorithm* minimax =  new MiniMax(6,7);
+        ms->setGameDriver( new BotDriver(minimax));
         dir->replaceScene(ms);
         
     });
+    this->wsm = new WebSocketManager();
+    this->wsm->connect("ws://localhost:8080/ws");
+    this->wsm->sendMessage("hello");
+
+    
     
 //    startButton->addTouchEventListener([](Object* sender, ui::Widget::TouchEventType type){
 //        switch(type) {

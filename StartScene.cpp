@@ -8,17 +8,18 @@
 #include "ui/CocosGUI.h"
 #include "StartScene.h"
 #include "MainScene.h"
-
-
+#include "../TestScene.h"
+#include "BotDriver.h"
+#include "../BotAlgorithms/MiniMaxBot.h"
 
 using namespace ax;
 
 bool StartScene::init()
 {
     if (!Scene::init())
-        {
-            return false;
-        }
+    {
+        return false;
+    }
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
 
@@ -34,52 +35,61 @@ bool StartScene::init()
     startButton->addClickEventListener([](Object* sender) {
         printf("change event fired");
         auto dir = Director:: getInstance();
-        auto ms = MainScene:: create();
+        auto ms = TestScene:: create();
+        
+        ms->setGameDriver( new GameDriver());
         dir->replaceScene(ms);
+        
     });
     
-    startButton->addTouchEventListener([](Object* sender, ui::Widget::TouchEventType type){
-        switch(type) {
-            case ui::Widget::TouchEventType::BEGAN:
-                 
-                break;
-            case ui::Widget::TouchEventType::MOVED:
-            
-                break;
-            case ui::Widget::TouchEventType::ENDED:
-                
-                break;
-            case ui::Widget::TouchEventType::CANCELED:
-                
-                break;
-            default:
-                break;
-        }
-    });
-
-
-    this->addChild(startButton);
-    return true;
-
-
-
+    auto startButton1 = ui::Button::create();
     
-//    button->addTouchEventListener([&](Ref* sender, Widget::TouchEventType type){
-//            switch (type)
-//            {
-//                    case ui::Widget::TouchEventType::BEGAN:
-//                            break;
-//                    case ui::Widget::TouchEventType::ENDED:
-//                            std::cout << "Button 1 clicked" << std::endl;
-//                            break;
-//                    default:
-//                            break;
-//            }
+    startButton1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 300));
+
+    startButton1->setTitleText("Play with Bot");
+   
+    startButton1->setTitleFontSize(40);
+
+    startButton1->addClickEventListener([](Object* sender) {
+        printf("change event fired");
+        auto dir = Director:: getInstance();
+        auto ms = MainScene:: create();
+        BotAlgorithm* minimax =  new MiniMax(6,7);
+        ms->setGameDriver( new BotDriver(minimax));
+        dir->replaceScene(ms);
+        
+    });
+    
+//    startButton->addTouchEventListener([](Object* sender, ui::Widget::TouchEventType type){
+//        switch(type) {
+//            case ui::Widget::TouchEventType::BEGAN:
+//
+//                break;
+//            case ui::Widget::TouchEventType::MOVED:
+//
+//                break;
+//            case ui::Widget::TouchEventType::ENDED:
+//
+//                break;
+//            case ui::Widget::TouchEventType::CANCELED:
+//
+//                break;
+//            default:
+//                break;
+//        }
 //    });
 
+
     this->addChild(startButton);
+   
+
+
     
+
+
+    this->addChild(startButton1);
     
+    return true;
 }
 
 StartScene::StartScene() {

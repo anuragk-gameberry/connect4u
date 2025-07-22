@@ -6,16 +6,16 @@
 
 using namespace std;
 
-const int AI_PLAYER = 1;
-const int HUMAN_PLAYER = 0;
-const int EMPTY_SLOT = -1;
-const int MAX_DEPTH = 3;
-const int INF = numeric_limits<int>::max();
 
-const int ROWS = 7;
-const int COLS = 6 ;
+MiniMax::MiniMax(int rows, int cols)
+    : AI_PLAYER(1),
+      HUMAN_PLAYER(0),
+      EMPTY_SLOT(-1),
+      MAX_DEPTH(3),
+      INF(std::numeric_limits<int>::max()),
+      ROWS(rows),
+      COLS(cols) {}
 
-typedef vector<vector<int>> Board;
 
 bool MiniMax::checkWin(const Board& board, int player) {
     // Horizontal

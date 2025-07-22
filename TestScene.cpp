@@ -1,18 +1,26 @@
+//
+//  TestScene.cpp
+//  testproj
+//
+//  Created by Anurag Khugshal on 21/07/25.
+//
 
 
-#include "MainScene.h"
+
+#include "TestScene.h"
 #include <vector>
 #include "../GameLogic/GameLogic.h"
 #include "../AnimationUtils.h"
 #include "GameDriver.h"
 #include "../Popup/GameOver.h"
+#include <iostream>
 using namespace ax;
 using namespace std;
 
 static int s_sceneID = 1000;
 
 
-bool MainScene::init()
+bool TestScene::init()
 {
     
     if (!Scene::init())
@@ -30,7 +38,7 @@ bool MainScene::init()
     });
     EventListenerCustom* placeTokenListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener("placeToken", [this](EventCustom* e){
         auto data = static_cast<vector<int>*>(e->getUserData());
-        MainScene:: placeToken((*data)[0], (*data)[1], (*data)[2]);
+        TestScene:: placeToken((*data)[0], (*data)[1], (*data)[2]);
         
         
     });
@@ -71,7 +79,7 @@ bool MainScene::init()
     
 
     auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
-                                           AX_CALLBACK_1(MainScene::menuCloseCallback, this));
+                                           AX_CALLBACK_1(TestScene::menuCloseCallback, this));
 
     
         float x = safeOrigin.x + safeArea.size.width - closeItem->getContentSize().width / 2;
@@ -89,9 +97,9 @@ bool MainScene::init()
 
     // Some templates (uncomment what you  need)
     _touchListener                 = EventListenerTouchAllAtOnce::create();
-    _touchListener->onTouchesBegan = AX_CALLBACK_2(MainScene::onTouchesBegan, this);
-    _touchListener->onTouchesMoved = AX_CALLBACK_2(MainScene::onTouchesMoved, this);
-    _touchListener->onTouchesEnded = AX_CALLBACK_2(MainScene::onTouchesEnded, this);
+    _touchListener->onTouchesBegan = AX_CALLBACK_2(TestScene::onTouchesBegan, this);
+    _touchListener->onTouchesMoved = AX_CALLBACK_2(TestScene::onTouchesMoved, this);
+    _touchListener->onTouchesEnded = AX_CALLBACK_2(TestScene::onTouchesEnded, this);
     _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
 
     
@@ -107,13 +115,32 @@ bool MainScene::init()
     auto board_back = Sprite::create("board_back.png"sv);
     boardSprite =  board_back;
     
-        
-    board_front->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-    board_back->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y +15));
+//        
+//    board_front->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+//    board_back->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y +20));
+//
+//   
+//    this->addChild(board_front, 0);
+//    this->addChild(board_back, -1);
+    
+    Size boardSize = board_front->getContentSize();
+    float scaleToFitWidth = visibleSize.width / boardSize.width;
+    AXLOGD("Testing {}", scaleToFitWidth);
 
-   
+    board_front->setScale(scaleToFitWidth);
+    board_back->setScale(scaleToFitWidth);
+
+    float scaledHeight = boardSize.height * scaleToFitWidth;
+    float centerX = origin.x + visibleSize.width / 2;
+    float centerY = origin.y + (visibleSize.height - scaledHeight) / 2 + scaledHeight / 2;
+
+    board_front->setPosition(Vec2(centerX, centerY));
+    board_back->setPosition(Vec2(centerX, centerY + 20));
+
     this->addChild(board_front, 0);
     this->addChild(board_back, -1);
+    
+    
     auto drawNode = DrawNode::create();
     drawNode->setPosition(Vec2(0, 0));
     addChild(drawNode);
@@ -123,11 +150,12 @@ bool MainScene::init()
 
     // scheduleUpdate() is required to ensure update(float) is called on every loop
     boardSize = boardSprite->getContentSize();
-    leftoffset = (boardSprite->getPositionX() - boardSize.width / 2) +82;
+    leftoffset = (boardSprite->getPositionX() - boardSize.width / 2) ;
     
-    bottomoffset = (boardSprite->getPositionY() - boardSize.height / 2) +72;
-    tokenBorderWidth  = 13;
-    tokenwidth = 79;
+    bottomoffset = (boardSprite->getPositionY() - boardSize.height / 2) ;
+    tokenBorderWidth  = 13*scaleToFitWidth;
+    tokenwidth = 79*scaleToFitWidth;
+    printf("setscale");
     
     scheduleUpdate();
 
@@ -135,11 +163,12 @@ bool MainScene::init()
 }
 
 
-void MainScene:: placeToken(int token, int col, int row){
+void TestScene:: placeToken(int token, int col, int row){
     if (row >= 6) return;
     auto visibleSize = _director->getVisibleSize();
     auto visibleOrigin  = _director->getVisibleOrigin();
     Sprite* tokenSprite = nullptr;
+//    row = 0; col = 0;
     if (token){
         tokenSprite = Sprite::create("disc.png", Rect(0, 0, 79, 79));
     }
@@ -147,20 +176,44 @@ void MainScene:: placeToken(int token, int col, int row){
         tokenSprite = Sprite::create("disc.png", Rect(79, 0, 79, 79));
     }
     
-    auto movetoken = MoveTo::create(0.5, Vec2(col*tokenwidth +leftoffset + tokenBorderWidth* col, row*tokenBorderWidth + row*tokenwidth + bottomoffset));
-    auto easedrop = EaseBounceOut::create(movetoken);
-    
-   
-    
-    tokenSprite->setPosition(Vec2( col*tokenwidth +leftoffset + tokenBorderWidth*col , visibleSize.height+ visibleOrigin.y));
+    float scale = boardSprite->getScale();
+
+    float scaledTokenWidth = 79 * scale;
+    float scaledTokenBorder = 13 * scale;
+
+    // Calculate offsets using scaled board size
+    Size boardSize = boardSprite->getContentSize();
+    float scaledBoardWidth = boardSize.width * scale;
+    float scaledBoardHeight = boardSize.height * scale;
+
+    float boardX = boardSprite->getPositionX();
+    float boardY = boardSprite->getPositionY();
+
+    // Now compute real top-left corner of board in world space
+    float leftoffset = (boardX - scaledBoardWidth / 2) + (82 * scale);
+    float bottomoffset = (boardY - scaledBoardHeight / 2) + (67 * scale);
+
+    // Final destination
+    float x = col * (scaledTokenWidth + scaledTokenBorder) + leftoffset;
+    float y = row * (scaledTokenWidth + scaledTokenBorder) + bottomoffset;
+
+    // Start token just above screen
+    auto startY = _director->getVisibleSize().height + _director->getVisibleOrigin().y;
+    tokenSprite->setPosition(Vec2(x, startY));
+
+    // Animate drop
+    auto movetoken = MoveTo::create(0.5f, Vec2(x, y));
+    auto easedrop = EaseBounceOut::create(movetoken->clone());
     tokenSprite->runAction(easedrop);
-    this->addChild(tokenSprite,2);
+
+    boardSprite->addChild(tokenSprite, 2);
     gameboardgui[col].push_back(tokenSprite);
+
    
 }
 
 
-void MainScene::onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event)
+void TestScene::onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event)
 {
     for (auto&& t : touches)
     {
@@ -200,7 +253,7 @@ void MainScene::onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event
 }
 
 
-void MainScene::onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event)
+void TestScene::onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event)
 {
     for (auto&& t : touches)
     {
@@ -208,7 +261,7 @@ void MainScene::onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event
     }
 }
 
-void MainScene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event)
+void TestScene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event)
 {
     for (auto&& t : touches)
     {
@@ -218,13 +271,13 @@ void MainScene::onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event
 
 
 
-void MainScene::update(float delta)
+void TestScene::update(float delta)
 {
    
 
 }
 
-void MainScene::menuCloseCallback(ax::Object* sender)
+void TestScene::menuCloseCallback(ax::Object* sender)
 {
     // Close the axmol game scene and quit the application
     _director->end();
@@ -232,18 +285,18 @@ void MainScene::menuCloseCallback(ax::Object* sender)
     
 }
 
-void MainScene:: setGameDriver(GameDriver* gd){
+void TestScene:: setGameDriver(GameDriver* gd){
     this->gd = gd;
 }
 
-MainScene::MainScene()
+TestScene::TestScene()
 {
     _sceneID = ++s_sceneID;
     AXLOGD("Scene: ctor: #{}", _sceneID);
   
 }
 
-MainScene::~MainScene()
+TestScene::~TestScene()
 {
     AXLOGD("~Scene: dtor: #{}", _sceneID);
 

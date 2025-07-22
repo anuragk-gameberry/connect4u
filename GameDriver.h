@@ -9,20 +9,26 @@
 #define GAME_DRIVER_H
 #include <vector>
 #include "../GameLogic/GameLogic.h"
+#include "../Entities/Player.h"
 
 class GameDriver {
 public:
     virtual void processMove (int col, int row);
+    virtual void rematch ();
+//    virtual bool validateMove();
     GameDriver();
     ~GameDriver();
+    bool finished;
     
 protected:
     void releaseWinEvents(std::vector<int> v, int col, int row);
-    
-private:
+
     int turn;
+    int totalPlayers;
+    
     std::vector<std::vector<int>> gameboard;
-    bool finished;
+//    std::vector<std::vector<Player>> players;
+   
     
 };
 

@@ -18,6 +18,14 @@ GameDriver:: ~GameDriver(){
     
 }
 
+void GameDriver::  rematch () {
+    this-> gameboard = std::vector<std::vector<int>> (7);
+    this->turn = true;
+    auto eventdispatcher = ax::Director::getInstance()->getEventDispatcher();
+    eventdispatcher->dispatchCustomEvent("rematch");
+    
+}
+
 void GameDriver:: processMove(int col, int row){
     if (row >=6 || finished){
         return;

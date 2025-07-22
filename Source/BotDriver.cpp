@@ -8,6 +8,10 @@
 #include "axmol.h"
 #include "../BotAlgorithms/MiniMaxBot.h"
 
+BotDriver:: BotDriver(BotAlgorithm* algo){
+    this->algo = algo;
+}
+
 void BotDriver:: processMove(int col, int row)  {
     auto eventdispatcher = ax::Director::getInstance()->getEventDispatcher();
  
@@ -32,17 +36,8 @@ void BotDriver:: processMove(int col, int row)  {
         eventdispatcher->dispatchCustomEvent("gameFinished");
     }
    
-   
-    Board temp = Board(7,vector<int>(6,-1));
     
-    //
-    for (int i=0; i<gameboard.size(); i++){
-        for (int j=0; j<gameboard[i].size(); j++){
-            temp[i][j]  =  gameboard[i][j];
-        }
-    }
-    
-    int nextcol =  MiniMax::getBestMove(gameboard);
+    int nextcol =  algo->getBestMove(gameboard);
     
     
     turn = !turn;
@@ -50,7 +45,7 @@ void BotDriver:: processMove(int col, int row)  {
     row = (int)gameboard[nextcol].size();
     gameboard[nextcol].push_back(turn);
     
-//    auto eventdispatcher = ax::Director::getInstance()->getEventDispatcher();
+
     Data =  {turn,nextcol,row};
     
     eventdispatcher->dispatchCustomEvent("placeToken", &Data);

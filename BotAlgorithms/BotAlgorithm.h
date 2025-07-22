@@ -10,5 +10,6 @@
 typedef std::vector<std::vector<int>> Board;
 
 class BotAlgorithm {
-    virtual int getBestMove(Board board);
+public:
+    virtual int getBestMove(Board board) = 0;
 };

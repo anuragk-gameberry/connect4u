@@ -10,11 +10,13 @@
 
 
 #include "axmol.h"
+#include "../WebSocketManager.h"
 class StartScene : public ax:: Scene {
     
     
 public:
     bool init() override;
+    WebSocketManager* wsm;
     CREATE_FUNC(StartScene);
 //    void update(float delta) override;
 

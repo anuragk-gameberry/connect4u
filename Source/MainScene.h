@@ -48,7 +48,7 @@ public:
     
     // a selector callback
     void menuCloseCallback(ax::Object* sender);
-    void placeToken (int token, int col, int row);
+    void placeToken (int token, int col);
     void setGameDriver(GameDriver* gd);
    
     MainScene();

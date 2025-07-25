@@ -9,18 +9,19 @@
 #include <string>
 
 class Player {
-private:
-    std::string name;
-    int playerId;
-
 public:
-   
-    Player(const std::string& name, int id) : name(name), playerId(id) {}
+    std::string name;
+    std::string playerId;
+    int turn;
 
-    std::string getName() const { return name; }
-    int getId() const { return playerId; }
-
-    void setName(const std::string& newName) { name = newName; }
-    void setId(int id) { playerId = id; }
+    Player (string name, string playerId, int turn);
+    
+    std::string getName() const;
+    int getPlayerId() const;
+    int getTurn() const;
+    
+    void setName(const std::string& newName);
+    void setPlayerId(int newPlayerId);
+    void setTurn(int newTurn);
 };
 

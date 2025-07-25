@@ -12,6 +12,7 @@
 #include "BotDriver.h"
 #include "../BotAlgorithms/MiniMaxBot.h"
 #include "../WebSocketManager.h"
+#include "../ServerDriver.h"
 
 using namespace ax;
 
@@ -36,7 +37,7 @@ bool StartScene::init()
     startButton->addClickEventListener([](Object* sender) {
         printf("change event fired");
         auto dir = Director:: getInstance();
-        auto ms = TestScene:: create();
+        auto ms = MainScene:: create();
         
         ms->setGameDriver( new GameDriver());
         dir->replaceScene(ms);
@@ -56,13 +57,12 @@ bool StartScene::init()
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
         BotAlgorithm* minimax =  new MiniMax(6,7);
-        ms->setGameDriver( new BotDriver(minimax));
+//        ms->setGameDriver( new BotDriver(minimax));
+        ms->setGameDriver(new ServerDriver());
         dir->replaceScene(ms);
         
     });
-    this->wsm = new WebSocketManager();
-    this->wsm->connect("ws://localhost:8080/ws");
-    this->wsm->sendMessage("hello");
+  
 
     
     

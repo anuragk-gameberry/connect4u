@@ -16,11 +16,15 @@
 class ServerDriver: public GameDriver {
 public:
     void processMove (int col, int row) override;
-    ServerDriver(bool isbot);
+    ServerDriver (bool isbot);
     void handleMessages (std::string msg);
     bool isBotGame;
+    void rematch () override;
+//    void stats () override;
+    
      
 protected:
+    
     WebSocketManager* wsm;
     Player* p;
   

@@ -19,12 +19,14 @@ public:
     GameDriver();
     ~GameDriver();
     bool finished;
+    int totalPlayers;
+    int turn;
     
 protected:
     void releaseWinEvents(std::vector<int> v, int col, int row);
 
-    int turn;
-    int totalPlayers;
+   
+   
     
     std::vector<std::vector<int>> gameboard;
 //    std::vector<std::vector<Player>> players;

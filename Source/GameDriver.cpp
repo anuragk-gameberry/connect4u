@@ -11,7 +11,8 @@
 GameDriver:: GameDriver(){
     this-> gameboard = std::vector<std::vector<int>> (7);
     this->finished = false;
-    this->turn = true;
+    this->turn = 0;
+  
 }
 
 GameDriver:: ~GameDriver(){
@@ -25,6 +26,7 @@ void GameDriver::  rematch () {
     eventdispatcher->dispatchCustomEvent("rematch");
     
 }
+
 
 void GameDriver:: processMove(int col, int row){
     if (row >=6 || finished){
@@ -40,6 +42,10 @@ void GameDriver:: processMove(int col, int row){
     
     
     eventdispatcher->dispatchCustomEvent("placeToken", &Data);
+    
+    
+ 
+    
     if (v[0]){
         releaseWinEvents(v, col, row);
         finished = true;
@@ -47,6 +53,7 @@ void GameDriver:: processMove(int col, int row){
 
     }
     turn = !turn;
+    eventdispatcher->dispatchCustomEvent("switchTurn", &turn);
 }
 
 
@@ -89,6 +96,10 @@ void GameDriver:: releaseWinEvents(std::vector <int> check, int col, int row) {
         }
     }
 }
+//
+//void GameDriver::stats(){
+//   
+//}
 
 
 

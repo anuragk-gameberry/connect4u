@@ -6,6 +6,8 @@
 #include "../AnimationUtils.h"
 #include "GameDriver.h"
 #include "../Popup/GameOver.h"
+#include "audio/AudioEngine.h"
+
 using namespace ax;
 using namespace std;
 
@@ -20,6 +22,15 @@ bool MainScene::init()
         return false;
     }
     AXLOGD("MAINSCENE STARTING...");
+    auto visibleSize = _director->getVisibleSize();
+    auto origin      = _director->getVisibleOrigin();
+    auto safeArea    = _director->getSafeAreaRect();
+    auto safeOrigin  = safeArea.origin;
+    
+    
+    
+   
+    
     EventListenerCustom* coinGlowListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener("coinGlow", [this](EventCustom* e){
         auto data = static_cast<pair<int,int>*>(e->getUserData());
         int col = data->first;
@@ -49,6 +60,8 @@ bool MainScene::init()
         
     });
     
+   
+    
     EventListenerCustom* gameFinished = Director::getInstance()->getEventDispatcher()->addCustomEventListener("gameFinished", [this](EventCustom* e) {
         this->scheduleOnce([this](float) {
             
@@ -56,6 +69,18 @@ bool MainScene::init()
             this->addChild(popup, 10); //
         }, 2.0f, "show_popup_key");
     });
+    
+    EventListenerCustom* switchTurn = Director::getInstance()->getEventDispatcher()->addCustomEventListener("switchTurn", [this, visibleSize](EventCustom* e){
+        auto data = static_cast<int*>(e->getUserData());
+        auto turnSprite = (*data)==0? Sprite:: create("button (2).png"):Sprite:: create("button (3).png");
+        turnSprite->setScale(0.4f, 0.4f);
+//        auto turnSprite = Sprite:: create("button(1).png");
+        
+        turnSprite->setPosition(visibleSize.width /2, 200);
+        this->addChild(turnSprite);
+    
+});
+
 
     
     
@@ -65,10 +90,7 @@ bool MainScene::init()
   
     gameboardgui = std::vector<std::vector<ax::Sprite*>> (7);
 
-    auto visibleSize = _director->getVisibleSize();
-    auto origin      = _director->getVisibleOrigin();
-    auto safeArea    = _director->getSafeAreaRect();
-    auto safeOrigin  = safeArea.origin;
+  
     
 
     auto closeItem = MenuItemImage::create("CloseNormal.png", "CloseSelected.png",
@@ -79,7 +101,16 @@ bool MainScene::init()
         float y = safeOrigin.y + closeItem->getContentSize().height / 2;
         closeItem->setPosition(Vec2(x, y));
     
-
+    auto background = Sprite::create("mainbg.png");
+    if (background)
+    {
+        background->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+        // Scale the background to fit the screen
+        float scaleX = visibleSize.width / background->getContentSize().width;
+        float scaleY = visibleSize.height / background->getContentSize().height;
+        background->setScale(scaleX, scaleY);
+        this->addChild(background, -1);
+    }
     // create menu, it's an autorelease object
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
@@ -111,11 +142,12 @@ bool MainScene::init()
     
         
     board_front->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-    board_back->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y +15));
-
+    board_back->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y +30));
+    
+    
    
-    this->addChild(board_front, 0);
-    this->addChild(board_back, -1);
+    this->addChild(board_front, 2);
+    this->addChild(board_back, 0);
     auto drawNode = DrawNode::create();
     drawNode->setPosition(Vec2(0, 0));
     addChild(drawNode);
@@ -127,7 +159,7 @@ bool MainScene::init()
     boardSize = boardSprite->getContentSize();
     leftoffset = (boardSprite->getPositionX() - boardSize.width / 2) +82;
     
-    bottomoffset = (boardSprite->getPositionY() - boardSize.height / 2) +72;
+    bottomoffset = (boardSprite->getPositionY() - boardSize.height / 2) +56;
     tokenBorderWidth  = 13;
     tokenwidth = 79;
     
@@ -152,12 +184,13 @@ void MainScene:: placeToken(int token, int col){
     
     auto movetoken = MoveTo::create(0.5, Vec2(col*tokenwidth +leftoffset + tokenBorderWidth* col, row*tokenBorderWidth + row*tokenwidth + bottomoffset));
     auto easedrop = EaseBounceOut::create(movetoken);
+    AudioEngine::play2d("drop.mp3");
+
     
-   
     
     tokenSprite->setPosition(Vec2( col*tokenwidth +leftoffset + tokenBorderWidth*col , visibleSize.height+ visibleOrigin.y));
     tokenSprite->runAction(easedrop);
-    this->addChild(tokenSprite,2);
+    this->addChild(tokenSprite,1);
     gameboardgui[col].push_back(tokenSprite);
    
 }
@@ -237,6 +270,13 @@ void MainScene::menuCloseCallback(ax::Object* sender)
 
 void MainScene:: setGameDriver(GameDriver* gd){
     this->gd = gd;
+    auto visibleSize = _director->getVisibleSize();
+    auto turnSprite = (this->gd->turn)==0? Sprite:: create("button (2).png"):Sprite:: create("button (3).png");
+
+    turnSprite->setScale(0.4f, 0.4f);
+    
+    turnSprite->setPosition(visibleSize.width /2, 200);
+    this->addChild(turnSprite);
 }
 
 MainScene::MainScene()

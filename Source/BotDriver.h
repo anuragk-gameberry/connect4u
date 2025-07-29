@@ -14,6 +14,7 @@ public:
      BotDriver (BotAlgorithm* algo);
 protected:
     BotAlgorithm* algo;
+    int playerturn = 0;
 };
 
 

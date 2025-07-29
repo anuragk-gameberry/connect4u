@@ -1,18 +1,17 @@
 //
-//  StartScene.h
+//  FirstScene.h
 //  testproj
 //
-//  Created by Anurag Khugshal on 14/07/25.
+//  Created by Anurag Khugshal on 25/07/25.
 //
 
-#ifndef __START_SCENE_H__
-#define __START_SCENE_H__
+
+#pragma once
 
 
 #include "axmol.h"
 #include "../WebSocketManager.h"
-#include "../GameDriver.h"
-class StartScene : public ax:: Scene {
+class FirstScene : public ax:: Scene {
     
     
 public:
@@ -25,16 +24,16 @@ public:
     void onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event);
-    GameDriver* gd;
+
 
     
     
 //    void startGame ();
    
 
-    StartScene();
-    ~StartScene() override;
+    FirstScene();
+    ~FirstScene() override;
 };
 
-#endif
+
 

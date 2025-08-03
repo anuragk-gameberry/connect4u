@@ -8,7 +8,7 @@
 #pragma once
 
 #include "axmol.h"
-#include "GameDriver.h"
+#include "../GameDriver.h"
 
 class PlayerPopup : public ax::LayerColor {
 public:

@@ -4,7 +4,7 @@
 //
 //  Created by Anurag Khugshal on 17/07/25.
 //
-#include "BotDriver.h"
+#include "../BotDriver.h"
 #include "axmol.h"
 #include "../BotAlgorithms/MiniMaxBot.h"
 #include <AsyncTaskPool.h>
@@ -43,7 +43,6 @@ void BotDriver:: processMove(int col, int row)  {
     
     
     turn = (turn+1)%2;
-   
     eventdispatcher->dispatchCustomEvent("switchTurn", &turn);
     
 //    int nextcol =  algo->getBestMove(gameboard);
@@ -82,12 +81,13 @@ void BotDriver:: processMove(int col, int row)  {
             
             }
             turn = (turn+1)%2;
+            
             eventdispatcher->dispatchCustomEvent("switchTurn", &turn);
         },
         this,
         
         []() {
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             // simulate delay / heavy task
         }
     );
@@ -98,5 +98,15 @@ void BotDriver:: processMove(int col, int row)  {
     
     
     
+    
+}
+
+void BotDriver::rematch(){
+    this-> gameboard = std::vector<std::vector<int>> (7);
+    this->turn = this->playerturn;
+    auto eventdispatcher = ax::Director::getInstance()->getEventDispatcher();
+    eventdispatcher->dispatchCustomEvent("rematch");
+   
+    eventdispatcher->dispatchCustomEvent("switchTurn", &this->playerturn);
     
 }

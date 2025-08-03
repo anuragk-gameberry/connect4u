@@ -9,10 +9,12 @@
 #include "StartScene.h"
 #include "MainScene.h"
 #include "../TestScene.h"
-#include "BotDriver.h"
+#include "../BotDriver.h"
 #include "../BotAlgorithms/MiniMaxBot.h"
 #include "../WebSocketManager.h"
 #include "../ServerDriver.h"
+#include "../Login.h"
+#include "Waiting.h"
 
 
 using namespace ax;
@@ -51,9 +53,15 @@ bool StartScene::init()
         printf("change event fired");
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
-        
-        ms->setGameDriver( new GameDriver());
+        GameDriver* gd = new GameDriver();
+        ms->setGameDriver( gd);
         dir->replaceScene(ms);
+//        auto dir = Director:: getInstance();
+//        auto ms = MainScene:: create();
+//        BotAlgorithm* minimax =  new MiniMax(6,7);
+//        GameDriver* gd  = new BotDriver(minimax);
+//        ms->setGameDriver( gd);
+//        dir->replaceScene(ms);
         
     });
     
@@ -70,7 +78,8 @@ bool StartScene::init()
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
         BotAlgorithm* minimax =  new MiniMax(6,7);
-        ms->setGameDriver( new BotDriver(minimax));
+        GameDriver* gd  = new BotDriver(minimax);
+        ms->setGameDriver( gd);
         dir->replaceScene(ms);
         
     });
@@ -85,13 +94,22 @@ bool StartScene::init()
 
     startButton2->addClickEventListener([this](Object* sender) {
         printf("change event fired");
-        auto dir = Director:: getInstance();
-        auto ms = MainScene:: create();
-//        BotAlgorithm* minimax =  new MiniMax(6,7);
-//        ms->setGameDriver( new BotDriver(minimax));
-        auto sd = new ServerDriver(true);
-        ms->setGameDriver(sd);
-        dir->replaceScene(ms);
+      
+        auto loginpopup = LoginPopup::createWithPlayer(0);
+        loginpopup->onSubmitCallback = [this] (std::string name){
+            auto dir = Director:: getInstance();
+            auto ms = MainScene:: create();
+            Player* p = new Player(name, name, 0);
+            GameDriver* sd = new ServerDriver(true, p);
+            this->gd = sd;
+            ms->setGameDriver(this->gd);
+            
+            dir->replaceScene(ms);
+        };
+        this->addChild(loginpopup,3);
+        vector<int> data = {0,0};
+        
+       
         
     });
   auto startButton3 = ui::Button::create("direction-sign.png");
@@ -105,23 +123,34 @@ bool StartScene::init()
     startButton3->addClickEventListener([this](Object* sender) {
         printf("change event fired");
       
-//        BotAlgorithm* minimax =  new MiniMax(6,7);
-//        auto ms = MainScene:: create();
-//        ms->setGameDriver( new BotDriver(minimax));
-        auto sd = new ServerDriver(false);
-        this->gd = sd;
-//        ms->setGameDriver(sd);
-//        dir->replaceScene(ms);
+        auto loginpopup = LoginPopup::createWithPlayer(0);
+        loginpopup->onSubmitCallback = [this] (std::string name){
+            Player* p = new Player(name, name, 0);
+            auto sd = new ServerDriver(false,p);
+            this->gd = sd;
+            WaitingPopup * wp = WaitingPopup:: create();
+            this->addChild(wp, 4 );
+        };
+        this->addChild(loginpopup,3);
+          
+//
         
     });
     EventListenerCustom* startMatch = Director::getInstance()->getEventDispatcher()->addCustomEventListener("startMatch", [this](EventCustom* e){
         auto data =  *(static_cast<vector<int>*>(e->getUserData()));
-        int turn = data[0];
+        int start = data[0];
+        int turn  = data[1];
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
-        this->gd->turn = turn;
+        this->gd->turn = start;
         ms->setGameDriver(this->gd);
         dir->replaceScene(ms);
+//        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("switchTurn", &start);
+        
+        
+      
+        
+        
         
            
         

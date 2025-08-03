@@ -56,6 +56,11 @@ public:
     
 private:
     ax::EventListenerTouchAllAtOnce* _touchListener = nullptr;
+    ax::EventListenerCustom* coinGlowListener = nullptr;
+    ax::EventListenerCustom*placeTokenListener = nullptr;
+    ax::EventListenerCustom*gameFinished = nullptr;
+    ax::EventListenerCustom*switchTurn = nullptr;
+    ax::EventListenerCustom*rematch = nullptr;
     int _sceneID                                    = 0;
     std::vector<std:: vector<int>> gameboard;
     std:: vector <std::vector<ax::Sprite*>> gameboardgui;
@@ -68,6 +73,7 @@ private:
     int tokenBorderWidth ;
     int tokenwidth ;
     GameDriver* gd;
+    ax::Label* currentplayer;
     
 };
 

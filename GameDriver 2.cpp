@@ -4,24 +4,25 @@
 //
 //  Created by Anurag Khugshal on 15/07/25.
 //
-#include "GameDriver.h"
+#include "../GameDriver.h"
 #include "axmol.h"
 #include <vector>
 
+
 GameDriver:: GameDriver(){
-    this-> gameboard = std::vector<std::vector<int>> (7);
+    this->gameboard = std::vector<std::vector<int>> (7);
     this->finished = false;
     this->turn = 0;
   
 }
 
 GameDriver:: ~GameDriver(){
-    
+    AXLOG("***GamerDriver*** deleted"); 
 }
 
 void GameDriver::  rematch () {
     this-> gameboard = std::vector<std::vector<int>> (7);
-    this->turn = true;
+    this->turn = 0;
     auto eventdispatcher = ax::Director::getInstance()->getEventDispatcher();
     eventdispatcher->dispatchCustomEvent("rematch");
     
@@ -30,6 +31,7 @@ void GameDriver::  rematch () {
 
 void GameDriver:: processMove(int col, int row){
     if (row >=6 || finished){
+        AXLOG("invalid row ");
         return;
     }
     this->gameboard[col].push_back(turn);
@@ -97,9 +99,9 @@ void GameDriver:: releaseWinEvents(std::vector <int> check, int col, int row) {
     }
 }
 //
-//void GameDriver::stats(){
-//   
-//}
+void GameDriver::stats(){
+   
+}
 
 
 

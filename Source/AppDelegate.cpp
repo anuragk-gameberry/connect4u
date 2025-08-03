@@ -24,7 +24,7 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "MainScene.h"
+#include "../MainScene.h"
 #include "../StartScene.h"
 #include "../FirstScene.h"
 #define USE_AUDIO_ENGINE 1

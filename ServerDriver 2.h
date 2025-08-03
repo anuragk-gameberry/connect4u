@@ -7,7 +7,7 @@
 
 
 #include "GameDriver.h"
-#include "WebSocketManager.h"
+#include "../Utils/WebSocketManager.h"
 #include "../Entities/Player.h"
 #include "../Message.h"
 
@@ -16,17 +16,19 @@
 class ServerDriver: public GameDriver {
 public:
     void processMove (int col, int row) override;
-    ServerDriver (bool isbot);
+    ServerDriver (bool isbot, Player *p);
     void handleMessages (std::string msg);
     bool isBotGame;
     void rematch () override;
-//    void stats () override;
+    ~ServerDriver();
+    void stats () override;
+    int currentPlayerTurn;
     
      
 protected:
     
     WebSocketManager* wsm;
-    Player* p;
+  
   
     bool GameStarted;
     

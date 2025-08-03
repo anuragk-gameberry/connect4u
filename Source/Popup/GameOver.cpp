@@ -79,7 +79,7 @@ bool PlayerPopup::initWithPlayer(int playerNumber, GameDriver* gd) {
     });
     
     closeBtn1->addClickEventListener([this,gd](Object*){
-//        gd->stats();
+        gd->stats();
         this->removeFromParent(); // Close the popup
     });
 

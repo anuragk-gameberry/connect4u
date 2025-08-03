@@ -15,18 +15,21 @@ class GameDriver {
 public:
     virtual void processMove (int col, int row);
     virtual void rematch ();
+    virtual void stats ();
 //    virtual bool validateMove();
     GameDriver();
     ~GameDriver();
     bool finished;
-    int totalPlayers;
     int turn;
+//    std::vector<Player> players;
+    Player* p;
+    
     
 protected:
     void releaseWinEvents(std::vector<int> v, int col, int row);
 
    
-   
+    int totalPlayers;
     
     std::vector<std::vector<int>> gameboard;
 //    std::vector<std::vector<Player>> players;

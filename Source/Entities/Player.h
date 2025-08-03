@@ -21,7 +21,7 @@ public:
     int getTurn() const;
     
     void setName(const std::string& newName);
-    void setPlayerId(int newPlayerId);
+    void setPlayerId(std::string newPlayerId);
     void setTurn(int newTurn);
 };
 

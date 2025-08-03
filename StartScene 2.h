@@ -12,6 +12,7 @@
 #include "axmol.h"
 #include "../WebSocketManager.h"
 #include "../GameDriver.h"
+#include "../Stats.h"
 class StartScene : public ax:: Scene {
     
     
@@ -19,6 +20,7 @@ public:
     bool init() override;
     WebSocketManager* wsm;
     CREATE_FUNC(StartScene);
+    std::vector<Stat*> stats;
 //    void update(float delta) override;
 
     // touch

@@ -1,4 +1,4 @@
-#include "WebSocketManager.h"
+#include "../WebSocketManager.h"
 #include "../JsonHandler.h"
 
 
@@ -21,7 +21,7 @@ void WebSocketManager::connect(const std::string& url) {
     AXLOG("reached here3.5");
     
     if(_ws == nullptr){
-        AXLOG("ws ius null");
+        AXLOG("ws is null");
     }
     
     if ((_ws != nullptr) && !_ws->open(this, url)) {
@@ -31,22 +31,26 @@ void WebSocketManager::connect(const std::string& url) {
     }
     
     AXLOG("reached final4");
-    while (!(_ws && _ws->getReadyState() == ax::network::WebSocket::State::OPEN )){
-        
-    }
+ 
    
     AXLOG("reached here5");
 }
 
 void WebSocketManager::sendMessage(const std::string& msg) {
-    
-    _ws->send(msg);
+    if (_ws && _ws->getReadyState() == ax::network::WebSocket::State::OPEN ){
+        _ws->send(msg);
+    }
+    else {
+        AXLOG("connection not ready");
+    }
+   
     
     
 }
 
 void WebSocketManager::onOpen(ax::network::WebSocket* ws) {
-    AXLOG("WebSocket connected.");
+    if (this->initialize)
+    this->initialize();
    
 }
 

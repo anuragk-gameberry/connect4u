@@ -70,7 +70,7 @@ Message JsonHandler:: parseJson( std::string& jsonStr) {
         return m;
     }
     if ( type == "RematchStart" && data.HasMember("Turn")) {
-        m.type = "Rematchstart";
+        m.type = "RematchStart";
         m.start = data["Start"].GetInt();
         m.turn = data["Turn"].GetInt();
         return m;
@@ -98,22 +98,41 @@ Message JsonHandler:: parseJson( std::string& jsonStr) {
    }
 
        
-   if (!data.HasMember("Winningpoints") || !data["Winningpoints"].IsArray()) {
+   if (data.HasMember("Winningpoints") && data["Winningpoints"].IsArray()) {
        std::cerr << "No Winner yet\n";
+       const Value& winningArray = data["Winningpoints"];
+       for (SizeType i = 0; i < winningArray.Size(); i++) {
+               const Value& point = winningArray[i];
+               if (!point.HasMember("Col") || !point.HasMember("Row")) {
+                   continue;
+               }
+               int col = point["Col"].GetInt();
+               int row = point["Row"].GetInt();
+               std::pair<int,int> Data = {col, row};
+               m.winningpoints.emplace_back(Data);
+   //            eventdispatcher->dispatchCustomEvent("coinGlow", &Data);
+       }
        return m;
    }
+    
 //    std::pair<int,int> Data;
-    const Value& winningArray = data["Winningpoints"];
-    for (SizeType i = 0; i < winningArray.Size(); i++) {
-            const Value& point = winningArray[i];
-            if (!point.HasMember("Col") || !point.HasMember("Row")) {
-                continue;
+    
+    
+   
+    if (data.HasMember("gameStats") && data["gameStats"].IsArray()) {
+        const Value& statsArray = data["gameStats"];
+
+        for (SizeType i = 0; i < statsArray.Size(); ++i) {
+            const Value& stat = statsArray[i];
+            if (stat.HasMember("Winner") && stat["Winner"].IsString()) {
+                Stat* s = new Stat();
+                s->Winner = stat["Winner"].GetString();
+//                s->Players =  std::vector<std::string>();
+                m.stats.push_back(s);
             }
-            int col = point["Col"].GetInt();
-            int row = point["Row"].GetInt();
-            std::pair<int,int> Data = {col, row};
-            m.winningpoints.emplace_back(Data);
-//            eventdispatcher->dispatchCustomEvent("coinGlow", &Data);
+        }
+
+        m.type = "gameStats";
     }
     return m;
    

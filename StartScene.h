@@ -10,11 +10,14 @@
 
 
 #include "axmol.h"
+#include "../WebSocketManager.h"
+#include "../GameDriver.h"
 class StartScene : public ax:: Scene {
     
-
+    
 public:
     bool init() override;
+    WebSocketManager* wsm;
     CREATE_FUNC(StartScene);
 //    void update(float delta) override;
 
@@ -22,7 +25,7 @@ public:
     void onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event);
-
+    GameDriver* gd;
 
     
     

@@ -17,8 +17,8 @@ class FirstScene : public ax:: Scene {
 public:
     bool init() override;
     WebSocketManager* wsm;
-    CREATE_FUNC(StartScene);
-//    void update(float delta) override;
+    CREATE_FUNC(FirstScene);
+    void update(float delta) override;
 
     // touch
     void onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event);

@@ -29,7 +29,7 @@ void Player::setName(const std::string& newName) {
     name = newName;
 }
 
-void Player::setPlayerId(int newPlayerId) {
+void Player::setPlayerId(std::string newPlayerId) {
     playerId = newPlayerId;
 }
 

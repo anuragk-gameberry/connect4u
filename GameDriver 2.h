@@ -15,13 +15,14 @@ class GameDriver {
 public:
     virtual void processMove (int col, int row);
     virtual void rematch ();
-//    virtual void stats ();
+    virtual void stats ();
 //    virtual bool validateMove();
     GameDriver();
     ~GameDriver();
     bool finished;
     int turn;
-    std::vector<Player> players;
+//    std::vector<Player> players;
+    Player* p;
     
     
 protected:

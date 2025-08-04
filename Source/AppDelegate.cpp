@@ -25,8 +25,9 @@
 
 #include "AppDelegate.h"
 #include "../MainScene.h"
-#include "../StartScene.h"
-#include "../FirstScene.h"
+#include "Scenes/StartScene.h"
+#include "Scenes/FirstScene.h"
+#include "Scenes/StatScene.h"
 #define USE_AUDIO_ENGINE 1
 
 #if USE_AUDIO_ENGINE
@@ -57,7 +58,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
     auto director = Director::getInstance();
-    auto glView   = director->getGLView();    
+    auto glView   = director->getGLView();
     if (!glView)
     {
 #if (AX_TARGET_PLATFORM == AX_PLATFORM_WIN32) || (AX_TARGET_PLATFORM == AX_PLATFORM_MAC) || \
@@ -87,6 +88,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 
 
     // create a scene. it's an autorelease object
+//    auto scene = utils::createInstance<FirstScene>();
     auto scene = utils::createInstance<FirstScene>();
 
     // run

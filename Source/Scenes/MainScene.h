@@ -50,7 +50,7 @@ public:
     void menuCloseCallback(ax::Object* sender);
     void placeToken (int token, int col);
     void setGameDriver(GameDriver* gd);
-   
+    void onExit();
     MainScene();
     ~MainScene() override;
     

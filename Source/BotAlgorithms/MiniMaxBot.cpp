@@ -207,4 +207,3 @@ int MiniMax::getBestMove(Board board) {
     }
     return bestCol;
 }
-

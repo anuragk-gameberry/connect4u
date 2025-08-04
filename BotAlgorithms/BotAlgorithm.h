@@ -1,15 +1,15 @@
+////
+////  BotAlgorithm.h
+////  testproj
+////
+////  Created by Anurag Khugshal on 20/07/25.
+////
 //
-//  BotAlgorithm.h
-//  testproj
+//#pragma once
+//#include <vector>
+//typedef std::vector<std::vector<int>> Board;
 //
-//  Created by Anurag Khugshal on 20/07/25.
-//
-
-#pragma once
-#include <vector>
-typedef std::vector<std::vector<int>> Board;
-
-class BotAlgorithm {
-public:
-    virtual int getBestMove(Board board) = 0;
-};
+//class BotAlgorithm {
+//public:
+//    virtual int getBestMove(Board board) = 0;
+//};

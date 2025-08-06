@@ -92,8 +92,9 @@ LoginPopup* LoginPopup::createWithPlayer(int playerNumber) {
 void LoginPopup::editBoxReturn(ui::EditBox* editBox)  {
     std::string text = editBox->getText();
     AXLOG("User entered: %s", text.c_str());
-    this->removeFromParentAndCleanup(true);
     this->onSubmitCallback(text);
+    this->removeFromParentAndCleanup(true);
+    
    
     
 }

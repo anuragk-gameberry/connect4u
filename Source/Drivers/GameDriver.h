@@ -13,26 +13,24 @@
 
 class GameDriver {
 public:
+    bool finished;
+    bool isBotGame;
+    int turn;
+    Player* p;
+    int rows;
+    int cols;
+    int totalPlayers;
     virtual void processMove (int col, int row);
     virtual void rematch ();
     virtual void stats ();
-//    virtual bool validateMove();
-    GameDriver();
+    GameDriver(int cols, int rows);
     ~GameDriver();
-    bool finished;
-    int turn;
-//    std::vector<Player> players;
-    Player* p;
     
     
 protected:
-    void releaseWinEvents(std::vector<int> v, int col, int row);
-
-   
-    int totalPlayers;
-    
     std::vector<std::vector<int>> gameboard;
-//    std::vector<std::vector<Player>> players;
+    void releaseWinEvents(std::vector<int> v, int col, int row);
+   
    
     
 };

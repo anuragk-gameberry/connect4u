@@ -27,142 +27,13 @@ bool MainScene::init()
     {
         return false;
     }
-    AXLOGD("MAINSCENE STARTING...");
+    this->addEventListeners();
+    
     auto visibleSize = _director->getVisibleSize();
     auto origin      = _director->getVisibleOrigin();
     auto safeArea    = _director->getSafeAreaRect();
     auto safeOrigin  = safeArea.origin;
     
-    
-    
-   
-    EventListenerCustom* Listener = Director::getInstance()->getEventDispatcher()->addCustomEventListener("playerLeft", [this](EventCustom* e){
-        if (!this->gameboardgui.size()){
-            return;
-        }
-        auto playerleft = PlayerLeftPopup::create();
-        this->addChild(playerleft, 5);
-        
-        
-        
-    });
-    
-    EventListenerCustom* Listener1 = Director::getInstance()->getEventDispatcher()->addCustomEventListener("coinGlow", [this](EventCustom* e){
-        if (!this->gameboardgui.size()){
-            return;
-        }
-        auto data = static_cast<pair<int,int>*>(e->getUserData());
-        int col = data->first;
-        int row = data->second;
-        auto temptoken = gameboardgui[col][row];
-        AnimationUtils::applyGlowEffect(temptoken,2);
-        
-        
-    });
-    EventListenerCustom* placeTokenListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener("placeToken", [this](EventCustom* e){
-        
-        if (!this->gameboardgui.size()){
-            return;
-        }
-        auto data = static_cast<vector<int>*>(e->getUserData());
-        this->placeToken((*data)[0], (*data)[1]);
-        
-        
-    });
-    
-        EventListenerCustom* rematch = Director::getInstance()->getEventDispatcher()->addCustomEventListener("rematch", [this](EventCustom* e){
-            if (!this->gameboardgui.size()){
-                return;
-            }
-            for (auto& row : gameboardgui) {
-                for (auto* sprite : row) {
-                    if (sprite) {
-                        sprite->removeFromParent(); // Detach from parent node
-                    }
-                }
-            }
-            gameboardgui = std::vector<std::vector<ax::Sprite*>> (7);
-            this->gd->finished = false;
-        
-    });
-    
-   
-    
-    EventListenerCustom* gameFinished = Director::getInstance()->getEventDispatcher()->addCustomEventListener("gameFinished", [this](EventCustom* e) {
-        if (!this->gameboardgui.size()){
-            return;
-        }
-        
-        this->scheduleOnce([this](float) {
-            if (!this->gameboardgui.size()){
-                return;
-            }
-            
-            auto popup = PlayerPopup::createWithPlayer(1,gd);
-            this->addChild(popup, 10); //
-            
-        }, 2.0f, "show_popup_key");
-    });
-    
-    EventListenerCustom* switchPlayerName = Director::getInstance()->getEventDispatcher()->addCustomEventListener("switchPlayerName", [this](EventCustom* e) {
-        if (!this->gameboardgui.size()){
-            return;
-        }
-        AXLOG("request came for switch label");
-        std:: string s = *static_cast<string*> (e->getUserData());
-        this->currentplayer->setString(s);
-    });
-    
-    EventListenerCustom* statsReceived = Director::getInstance()->getEventDispatcher()->addCustomEventListener("stats", [this](EventCustom* e) {
-        auto stats = *static_cast<std::vector<Stat*> *>(e->getUserData());
-      
-        if (!this->gameboardgui.size()){
-            return;
-        }
-      
-          
-            AXLOG("received a stat");
-            auto ss = StatScene :: create();
-//
-            ss->stats = stats;
-            ss->initiateStats();
-            auto dir = _director->getInstance();
-            dir->replaceScene(ss);
-            
-           
-            
-       
-    });
-    
-    
-    
-    EventListenerCustom* switchTurn = Director::getInstance()->getEventDispatcher()->addCustomEventListener("switchTurn", [this, visibleSize](EventCustom* e){
-        AXLOG("called switching turn");
-        auto data = static_cast<int*>(e->getUserData());
-        auto turnSprite = (*data)==0? Sprite:: create("button (2).png"):Sprite:: create("button (3).png");
-        turnSprite->setScale(0.4f, 0.4f);
-        std:: string_view currentplayertext = this->currentplayer->getString();
-        
-        if(currentplayertext!= "Your Turn"){
-            this->currentplayer->setString("Your Turn");
-        }
-        
-        else {
-            this->currentplayer->setString("");
-            
-        }
-//        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("playerLeft");
-        
-        
-       
-//        auto turnSprite = Sprite:: create("button(1).png");
-        
-        turnSprite->setPosition(visibleSize.width /2, 200);
-        this->addChild(turnSprite);
-    
-});
-
-
     
     
     
@@ -199,10 +70,7 @@ bool MainScene::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
 
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // Some templates (uncomment what you  need)
+   
     _touchListener                 = EventListenerTouchAllAtOnce::create();
     _touchListener->onTouchesBegan = AX_CALLBACK_2(MainScene::onTouchesBegan, this);
     _touchListener->onTouchesMoved = AX_CALLBACK_2(MainScene::onTouchesMoved, this);
@@ -253,6 +121,10 @@ bool MainScene::init()
 
 
 void MainScene:: placeToken(int token, int col){
+  
+    if(gameboardgui.size() <= col) {
+        return;
+    }
     int row  =  gameboardgui[col].size();
     if (row >= 6) return;
     auto visibleSize = _director->getVisibleSize();
@@ -374,32 +246,155 @@ MainScene::MainScene()
 
 MainScene::~MainScene()
 {
-//    AXLOGD("~Scene: dtor: #{}", _sceneID);
-//
-//    if (_touchListener)
-//    _eventDispatcher->removeEventListener(_touchListener);
-//    _eventDispatcher->removeCustomEventListeners("coinGlowListener");
-//    _eventDispatcher->removeCustomEventListeners("coinGlowListener");
-//    _eventDispatcher->removeCustomEventListeners("placeTokenListener");
-//    _eventDispatcher->removeCustomEventListeners("gameFinished");
-//    _eventDispatcher->removeCustomEventListeners("switchTurn");
-//    _eventDispatcher->removeCustomEventListeners("rematch");
+
 
 
     _sceneID = -1;
 }
-//void MainScene::
-void MainScene::onExit() {
-    Scene::onExit();  // always call parent
 
-    // Remove all custom listeners this scene registered
+void MainScene::onExit() {
+    Scene::onExit();
     if (_touchListener)
     _eventDispatcher->removeEventListener(_touchListener);
-    _eventDispatcher->removeCustomEventListeners("coinGlowListener");
-    _eventDispatcher->removeCustomEventListeners("coinGlowListener");
-    _eventDispatcher->removeCustomEventListeners("placeTokenListener");
+//    _eventDispatcher->removeCustomEventListeners("coinGlowListener");
+    _eventDispatcher->removeCustomEventListeners("coinGlow");
+    _eventDispatcher->removeCustomEventListeners("placeToken");
     _eventDispatcher->removeCustomEventListeners("gameFinished");
     _eventDispatcher->removeCustomEventListeners("switchTurn");
     _eventDispatcher->removeCustomEventListeners("rematch");
+    _eventDispatcher->removeCustomEventListeners("switchPlayerName");
+    _eventDispatcher->removeCustomEventListeners("statsReceived");
+    _eventDispatcher->removeCustomEventListeners("playerLeft");
+    
     AXLOG("Deleted all event listeners");
+}
+
+
+
+
+void MainScene:: addEventListeners (){
+    auto visibleSize = _director->getVisibleSize();
+     playerLeft = Director::getInstance()->getEventDispatcher()->addCustomEventListener("playerLeft", [this](EventCustom* e){
+        if (!this->gameboardgui.size()){
+            return;
+        }
+        auto playerleft = PlayerLeftPopup::create();
+        this->addChild(playerleft, 5);
+        
+        
+        
+    });
+    
+    coinGlowListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener("coinGlow", [this](EventCustom* e){
+        if (!this->gameboardgui.size()){
+            return;
+        }
+        auto data = static_cast<pair<int,int>*>(e->getUserData());
+        int col = data->first;
+        int row = data->second;
+        auto temptoken = gameboardgui[col][row];
+        AnimationUtils::applyGlowEffect(temptoken,2);
+        
+        
+    });
+     placeTokenListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener("placeToken", [this](EventCustom* e){
+        
+        if (!this->gameboardgui.size()){
+            return;
+        }
+        auto data = static_cast<vector<int>*>(e->getUserData());
+        this->placeToken((*data)[0], (*data)[1]);
+        
+        
+    });
+    
+         rematch = Director::getInstance()->getEventDispatcher()->addCustomEventListener("rematch", [this](EventCustom* e){
+            if (!this->gameboardgui.size()){
+                return;
+            }
+            for (auto& row : gameboardgui) {
+                for (auto* sprite : row) {
+                    if (sprite) {
+                        sprite->removeFromParent(); // Detach from parent node
+                    }
+                }
+            }
+            gameboardgui = std::vector<std::vector<ax::Sprite*>> (7);
+            this->gd->finished = false;
+        
+    });
+    
+   
+    
+     gameFinished = Director::getInstance()->getEventDispatcher()->addCustomEventListener("gameFinished", [this](EventCustom* e) {
+        if (!this->gameboardgui.size()){
+            return;
+        }
+        
+        this->scheduleOnce([this](float) {
+            if (!this->gameboardgui.size()){
+                return;
+            }
+            
+            auto popup = PlayerPopup::createWithPlayer(1,gd);
+            this->addChild(popup, 10); //
+            
+        }, 2.0f, "show_popup_key");
+    });
+    
+    switchPlayerName = Director::getInstance()->getEventDispatcher()->addCustomEventListener("switchPlayerName", [this](EventCustom* e) {
+        if (!this->gameboardgui.size()){
+            return;
+        }
+        AXLOG("request came for switch label");
+        std:: string s = *static_cast<string*> (e->getUserData());
+        this->currentplayer->setString(s);
+    });
+    
+    statsReceived = Director::getInstance()->getEventDispatcher()->addCustomEventListener("stats", [this](EventCustom* e) {
+        auto stats = *static_cast<std::vector<Stat*> *>(e->getUserData());
+      
+        if (!this->gameboardgui.size()){
+            return;
+        }
+      
+          
+            AXLOG("received a stat");
+            auto ss = StatScene :: create();
+//
+            ss->stats = stats;
+            ss->initiateStats();
+            auto dir = _director->getInstance();
+            dir->pushScene(ss);
+            
+           
+            
+       
+    });
+    
+    
+    
+     switchTurn = Director::getInstance()->getEventDispatcher()->addCustomEventListener("switchTurn", [this, visibleSize](EventCustom* e){
+        AXLOG("called switching turn");
+        auto data = static_cast<int*>(e->getUserData());
+        auto turnSprite = (*data)==0? Sprite:: create("button (2).png"):Sprite:: create("button (3).png");
+        turnSprite->setScale(0.4f, 0.4f);
+        std:: string_view currentplayertext = this->currentplayer->getString();
+        
+        if(currentplayertext!= "Your Turn"){
+            this->currentplayer->setString("Your Turn");
+        }
+        
+        else {
+            this->currentplayer->setString("");
+            
+        }
+        
+        turnSprite->setPosition(visibleSize.width /2, 200);
+        this->addChild(turnSprite);
+    
+});
+
+
+    
 }

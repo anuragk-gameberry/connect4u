@@ -57,7 +57,7 @@ bool StatScene::initiateStats() {
     listView->setGravity(ui::ListView::Gravity::CENTER_HORIZONTAL);
     listView->setItemsMargin(30.0f);
 
-    auto headerLabel = Label::createWithSystemFont("  Date     Winner", "Arial", 40);
+    auto headerLabel = Label::createWithSystemFont("S.No   Date     Winner", "Arial", 40);
     headerLabel->setTextColor(Color4B::BLACK);
     auto headerLayout = ui::Layout::create();
     headerLayout->setContentSize(Size(300, 60));
@@ -79,9 +79,10 @@ bool StatScene::initiateStats() {
     this->addChild(listView, 1);
     auto backbtn = ui::Button:: create("replay.png");
     backbtn->addClickEventListener ([](Object* sender){
-        auto dir = Director:: getInstance();
-        auto ss = StartScene:: create();
-        dir->replaceScene(ss);
+        auto dir = Director::getInstance();
+//        auto ss = StartScene:: create();
+        dir->popScene();
+        dir->popScene();
     });
     backbtn->setPosition(Vec2(visibleSize.width/2, visibleSize.height*0.2f));
     backbtn->setScale(0.5f);

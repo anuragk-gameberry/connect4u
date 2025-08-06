@@ -50,17 +50,21 @@ public:
     void menuCloseCallback(ax::Object* sender);
     void placeToken (int token, int col);
     void setGameDriver(GameDriver* gd);
-    void onExit();
+    void onExit() override;
+    void addEventListeners();
     MainScene();
     ~MainScene() override;
     
 private:
     ax::EventListenerTouchAllAtOnce* _touchListener = nullptr;
     ax::EventListenerCustom* coinGlowListener = nullptr;
-    ax::EventListenerCustom*placeTokenListener = nullptr;
-    ax::EventListenerCustom*gameFinished = nullptr;
-    ax::EventListenerCustom*switchTurn = nullptr;
-    ax::EventListenerCustom*rematch = nullptr;
+    ax::EventListenerCustom* placeTokenListener = nullptr;
+    ax::EventListenerCustom* gameFinished = nullptr;
+    ax::EventListenerCustom* switchTurn = nullptr;
+    ax::EventListenerCustom* rematch = nullptr;
+    ax::EventListenerCustom* switchPlayerName = nullptr;
+    ax::EventListenerCustom* statsReceived = nullptr;
+    ax::EventListenerCustom* playerLeft = nullptr;
     int _sceneID                                    = 0;
     std::vector<std:: vector<int>> gameboard;
     std:: vector <std::vector<ax::Sprite*>> gameboardgui;

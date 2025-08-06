@@ -8,7 +8,6 @@
 #include "ui/CocosGUI.h"
 #include "StartScene.h"
 #include "Scenes/MainScene.h"
-#include "../TestScene.h"
 #include "Drivers/BotDriver.h"
 #include "../BotAlgorithms/MiniMaxBot.h"
 #include "Utils/WebSocketManager.h"
@@ -25,6 +24,7 @@ bool StartScene::init()
     {
         return false;
     }
+   
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
     
@@ -41,103 +41,115 @@ bool StartScene::init()
         this->addChild(background, -1);
     }
     
-    auto startButton = ui::Button::create("direction-sign.png");
+    auto friendGameBtn = ui::Button::create("direction-sign.png");
     
-    startButton->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2+450));
+    friendGameBtn->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2+450));
 
-    startButton->setTitleText("Play with Friend");
+    friendGameBtn->setTitleText("Play with Friend");
    
-    startButton->setTitleFontSize(40);
+    friendGameBtn->setTitleFontSize(40);
 
-    startButton->addClickEventListener([](Object* sender) {
+    friendGameBtn->addClickEventListener([](Object* sender) {
         printf("change event fired");
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
-        GameDriver* gd = new GameDriver();
+        GameDriver* gd = new GameDriver(7,6);
         ms->setGameDriver( gd);
-        dir->replaceScene(ms);
-//        auto dir = Director:: getInstance();
-//        auto ms = MainScene:: create();
-//        BotAlgorithm* minimax =  new MiniMax(6,7);
-//        GameDriver* gd  = new BotDriver(minimax);
-//        ms->setGameDriver( gd);
-//        dir->replaceScene(ms);
-        
+        dir->pushScene(ms);
     });
     
-    auto startButton1 = ui::Button::create("direction-sign.png");
+    auto botgameBtn = ui::Button::create("direction-sign.png");
     
-    startButton1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 +150));
+    botgameBtn->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 +150));
 
-    startButton1->setTitleText("Play with Bot");
+    botgameBtn->setTitleText("Play with Bot");
    
-    startButton1->setTitleFontSize(40);
+    botgameBtn->setTitleFontSize(40);
 
-    startButton1->addClickEventListener([](Object* sender) {
+    botgameBtn->addClickEventListener([](Object* sender) {
         printf("change event fired");
         auto dir = Director:: getInstance();
         auto ms = MainScene:: create();
 //        ms->gameboardgui = std::vector<std::vector<ax::Sprite*>>(7);
         BotAlgorithm* minimax =  new MiniMax(6,7);
-        GameDriver* gd  = new BotDriver(minimax);
+        GameDriver* gd  = new BotDriver(minimax,7,6);
         ms->setGameDriver( gd);
-        dir->replaceScene(ms);
+        dir->pushScene(ms);
         
     });
     
-    auto startButton2 = ui::Button::create("direction-sign.png");
+    auto playServerBtn = ui::Button::create("direction-sign.png");
     
-    startButton2->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 -150));
+    playServerBtn->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 -150));
 
-    startButton2->setTitleText("Play with Server");
+    playServerBtn->setTitleText("Play with Server");
    
-    startButton2->setTitleFontSize(40);
+    playServerBtn->setTitleFontSize(40);
 
-    startButton2->addClickEventListener([this](Object* sender) {
+    playServerBtn->addClickEventListener([this](Object* sender) {
         printf("change event fired");
-      
-        auto loginpopup = LoginPopup::createWithPlayer(0);
-        loginpopup->onSubmitCallback = [this] (std::string name){
+        if (this->gd){
             auto dir = Director:: getInstance();
+            Player* p = gd->p;
             auto ms = MainScene:: create();
-            Player* p = new Player(name, name, 0);
-            GameDriver* sd = new ServerDriver(true, p);
+            GameDriver* sd = new ServerDriver(true, p,7,6);
             this->gd = sd;
             ms->setGameDriver(sd);
-            
-            dir->replaceScene(ms);
-        };
-        this->addChild(loginpopup,3);
-        vector<int> data = {0,0};
-        
-       
+            dir->pushScene(ms);
+        }
+        else {
+            auto loginpopup = LoginPopup::createWithPlayer(0);
+            loginpopup->setName("LoginPopup"); 
+            loginpopup->onSubmitCallback = [this] (std::string name){
+                auto dir = Director:: getInstance();
+                auto ms = MainScene:: create();
+                Player* p = new Player(name, name, 0);
+                GameDriver* sd = new ServerDriver(true, p,7,6);
+                this->gd = sd;
+                ms->setGameDriver(sd);
+                dir->pushScene(ms);
+                
+            };
+            this->addChild(loginpopup,3);
+        }
         
     });
-  auto startButton3 = ui::Button::create("direction-sign.png");
     
-    startButton3->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 450));
-
-    startButton3->setTitleText("Multiplayer Game");
-   
-    startButton3->setTitleFontSize(40);
-
-    startButton3->addClickEventListener([this](Object* sender) {
+    auto multiplayerBtn = ui::Button::create("direction-sign.png");
+    multiplayerBtn->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 - 450));
+    multiplayerBtn->setTitleText("Multiplayer Game");
+    multiplayerBtn->setTitleFontSize(40);
+    multiplayerBtn->addClickEventListener([this](Object* sender) {
         printf("change event fired");
-      
-        auto loginpopup = LoginPopup::createWithPlayer(0);
-        loginpopup->onSubmitCallback = [this] (std::string name){
-            Player* p = new Player(name, name, 0);
-            auto sd = new ServerDriver(false,p);
+        if (this->gd){
+            Player* p = this->gd->p;
+            auto sd = new ServerDriver(false,p,7,6);
             this->gd = sd;
-            WaitingPopup * wp = WaitingPopup:: create();
-            this->addChild(wp, 4 );
-        };
-        this->addChild(loginpopup,3);
-          
-//
-        
+            WaitingPopup * waitingPopup = WaitingPopup:: create();
+            waitingPopup->setName("waitingPopup");
+            this->addChild(waitingPopup, 4 );
+        }
+        else {
+            auto loginpopup = LoginPopup::createWithPlayer(0);
+            loginpopup->setName("LoginPopup");
+            loginpopup->onSubmitCallback = [this] (std::string name){
+                Player* p = new Player(name, name, 0);
+                auto sd = new ServerDriver(false,p,7,6);
+                this->gd = sd;
+                WaitingPopup * waitingPopup = WaitingPopup:: create();
+                waitingPopup->setName("waitingPopup");
+                this->addChild(waitingPopup, 4 );
+            };
+            this->addChild(loginpopup,3);
+        }
+       
+      
     });
+    
     EventListenerCustom* startMatch = Director::getInstance()->getEventDispatcher()->addCustomEventListener("startMatch", [this](EventCustom* e){
+        
+        this->removeChildByName("waitingPopup");
+        
         auto data =  *(static_cast<vector<int>*>(e->getUserData()));
         int start = data[0];
         int turn  = data[1];
@@ -145,49 +157,24 @@ bool StartScene::init()
         auto ms = MainScene:: create();
         this->gd->turn = start;
         ms->setGameDriver(this->gd);
-        dir->replaceScene(ms);
-//        Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("switchTurn", &start);
-        
-        
-      
-        
-        
-        
-           
-        
+        dir->pushScene(ms);
+ 
     });
 
-    
-    
-//    startButton->addTouchEventListener([](Object* sender, ui::Widget::TouchEventType type){
-//        switch(type) {
-//            case ui::Widget::TouchEventType::BEGAN:
-//                 
-//                break;
-//            case ui::Widget::TouchEventType::MOVED:
-//            
-//                break;
-//            case ui::Widget::TouchEventType::ENDED:
-//                
-//                break;
-//            case ui::Widget::TouchEventType::CANCELED:
-//                
-//                break;
-//            default:
-//                break;
-//        }
-//    });
 
+    this->addChild(friendGameBtn);
 
-    this->addChild(startButton);
-
-    this->addChild(startButton1);
-    this->addChild(startButton2);
-    this->addChild(startButton3);
+    this->addChild(botgameBtn);
+    this->addChild(playServerBtn);
+    this->addChild(multiplayerBtn);
     
     return true;
 }
 
+void StartScene::onExit(){
+     Scene::onExit();
+//    _eventDispatcher->removeCustomEventListeners("startMatch");
+}
 StartScene::StartScene() {
     // Your constructor code here (or empty)
 }

@@ -9,8 +9,10 @@
 #include <vector>
 
 
-GameDriver:: GameDriver(){
-    this->gameboard = std::vector<std::vector<int>> (7);
+GameDriver:: GameDriver(int cols, int rows){
+    this->cols =cols;
+    this->rows = rows;
+    this->gameboard = std::vector<std::vector<int>> (cols);
     this->finished = false;
     this->turn = 0;
   
@@ -30,7 +32,7 @@ void GameDriver::  rematch () {
 
 
 void GameDriver:: processMove(int col, int row){
-    if (row >=6 || finished){
+    if (row >= rows || finished){
         AXLOG("invalid row ");
         return;
     }

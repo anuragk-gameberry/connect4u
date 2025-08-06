@@ -10,14 +10,17 @@
 #include <AsyncTaskPool.h>
 using namespace ax;
 
-BotDriver:: BotDriver(BotAlgorithm* algo){
+
+BotDriver::BotDriver(BotAlgorithm* algo, int cols, int rows)
+: GameDriver(cols, rows), algo(algo){
+    
     this->algo = algo;
 }
 
 void BotDriver:: processMove(int col, int row)  {
     auto eventdispatcher = ax::Director::getInstance()->getEventDispatcher();
  
-    if (finished || row >=6 || turn!=playerturn){
+    if (finished || row >=rows || turn!=playerturn){
         return;
     }
     
@@ -44,28 +47,11 @@ void BotDriver:: processMove(int col, int row)  {
     
     turn = (turn+1)%2;
     eventdispatcher->dispatchCustomEvent("switchTurn", &turn);
-    
-//    int nextcol =  algo->getBestMove(gameboard);
-//    row = (int)gameboard[nextcol].size();
-//    gameboard[nextcol].push_back(turn);
-//    
-//
-//    Data =  {turn,nextcol,row};
-    
-//    eventdispatcher->dispatchCustomEvent("placeToken", &Data);
-//    v = GameLogic::didwin(gameboard, nextcol, row);
-//    if (v[0]){
-//        finished = true;
-//        releaseWinEvents(v, nextcol, row);
-//        eventdispatcher->dispatchCustomEvent("gameFinished");
-//    
-//    }
+
     AsyncTaskPool::getInstance()->enqueue(
         AsyncTaskPool::TaskType::TASK_OTHER,
        
         [this,eventdispatcher](void* param) {
-//            auto self = static_cast<BotDriver*>(param);
-//            self->turn = !self->turn;
             int nextcol =  algo->getBestMove(gameboard);
             int row = (int)gameboard[nextcol].size();
             gameboard[nextcol].push_back(turn);
@@ -88,13 +74,12 @@ void BotDriver:: processMove(int col, int row)  {
         
         []() {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            // simulate delay / heavy task
+          
         }
     );
 
 
-//    turn = (turn+1)%2;
-//    eventdispatcher->dispatchCustomEvent("switchTurn", &turn);
+
     
     
     

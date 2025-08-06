@@ -19,20 +19,17 @@ class StartScene : public ax:: Scene {
 public:
     bool init() override;
     WebSocketManager* wsm;
-    CREATE_FUNC(StartScene);
     std::vector<Stat*> stats;
-//    void update(float delta) override;
+    GameDriver* gd;
 
-    // touch
+
+    CREATE_FUNC(StartScene);
+    void onExit() override;
+    
     void onTouchesBegan(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesMoved(const std::vector<ax::Touch*>& touches, ax::Event* event);
     void onTouchesEnded(const std::vector<ax::Touch*>& touches, ax::Event* event);
-    GameDriver* gd;
-
     
-    
-//    void startGame ();
-   
 
     StartScene();
     ~StartScene() override;

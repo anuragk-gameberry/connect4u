@@ -15,14 +15,16 @@
 
 class ServerDriver: public GameDriver {
 public:
+ 
     void processMove (int col, int row) override;
-    ServerDriver (bool isbot, Player *p);
+    ServerDriver (bool isbot, Player *p, int cols, int rows);
     void handleMessages (std::string msg);
-    bool isBotGame;
     void rematch () override;
     ~ServerDriver();
     void stats () override;
-    int currentPlayerTurn;
+    void startGame();
+    
+    
     
      
 protected:

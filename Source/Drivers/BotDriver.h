@@ -11,8 +11,9 @@
 class BotDriver: public GameDriver {
 public:
      void processMove (int col, int row) override;
-     BotDriver (BotAlgorithm* algo);
+     BotDriver (BotAlgorithm* algo,int cols, int rows);
      void rematch () override;
+     
 protected:
     BotAlgorithm* algo;
     int playerturn = 0;

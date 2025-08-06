@@ -14,20 +14,7 @@
 #include <axmol.h>
 
 
-std::string getCurrentTimestamp() {
-    // Get current time as time_t
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_time = std::chrono::system_clock::to_time_t(now);
 
-    // Format time to string
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&now_time), "%Y-%m-%d %H:%M:%S");
-    return ss.str();
-}
-//void ServerDriver::stats() {
-//    std::string statsmsg =   JsonHandler::getJson("stats", p->playerId,0 );
-//    this->wsm->sendMessage(statsmsg);
-//}
 void ServerDriver::  processMove(int col, int row){
    
     std::string move =   JsonHandler::getJson("move", p->playerId,col );
@@ -74,90 +61,55 @@ void ServerDriver::handleMessages (std::string msg){
             myturn = "Your Turn";
             eventdispatcher->dispatchCustomEvent("switchPlayerName", &myturn);
         }
-       
+
         
     }
     
     if (m.type == "gameStats"){
-       
-       
-            
             eventdispatcher->dispatchCustomEvent("stats", &m.stats);
-            
-        
-       
-        
     }
 }
 
 
-ServerDriver :: ServerDriver (bool isbot, Player *p) {
+ServerDriver :: ServerDriver (bool isbot, Player *p, int cols, int rows) :GameDriver(cols,rows) {
     this->isBotGame = isbot;
     this->p = p;
     this->wsm = new WebSocketManager();
-//    AXLOG("reached here1");
+
     this->wsm->onMessageReceived = [this](std::string& msg) {
         this->handleMessages(msg);
     };
-//    AXLOG("reached here2");
-    std:: string id =  getCurrentTimestamp();
-   
-//    AXLOG("reached here6");
-//    this->p = new Player(p->playerId, p->playerId, 0);
-//    AXLOG("reached here7");
-    
-    
-    
-    
+
     this->wsm->initialize = [this]() {
-            std::string init = JsonHandler::getJson("init", this->p->playerId, 0);
-            wsm->sendMessage(init);
-
-            std::string startQueue = JsonHandler::getJson("startQueue", this->p->playerId, 0);
-            std::string startBot = JsonHandler::getJson("startBot", this->p->playerId, 0);
-
-           
-            if (this->isBotGame) {
-                wsm->sendMessage(startBot);
-            }
-            else {
-                wsm->sendMessage(startQueue);
-            }
-
-            AXLOG("Sent init/startQueue/startBot");
-        };
+        std::string init = JsonHandler::getJson("init", this->p->playerId, 0);
+        wsm->sendMessage(init);
+        this->startGame();
+       
+        AXLOG("Sent init/startQueue/startBot");
+    };
     
     
     
     
-    
-    
-    
-    
-    
-    
-    
-//    std::string init =   JsonHandler::getJson("init", p->playerId, 0);
-//    this->wsm->sendMessage(init);
      this->wsm->connect("ws://localhost:8081/ws");
-    AXLOG("reached here8");
+
    
-//    std::string start =   JsonHandler::getJson("startBot", p->playerId, 0);
-    std::string startQueue =   JsonHandler::getJson("startQueue", p->playerId, 0);
-    std::string startBot =   JsonHandler::getJson("startBot", p->playerId, 0);
     
-    if (this->isBotGame){
-//        this->wsm->sendMessage(startBot);
-        AXLOG("startbot...");
+    
+    
+}
+void ServerDriver::startGame(){
+    std::string startQueue = JsonHandler::getJson("startQueue", this->p->playerId, 0);
+    std::string startBot = JsonHandler::getJson("startBot", this->p->playerId, 0);
+
+   
+    if (this->isBotGame) {
+        wsm->sendMessage(startBot);
     }
     else {
-//        this->wsm->sendMessage(startQueue);
-        AXLOG("startQueue...");
-
+        wsm->sendMessage(startQueue);
     }
-    
-    
-    
+
 }
 
 void ServerDriver:: rematch () {
@@ -176,10 +128,10 @@ void ServerDriver::stats()
     std::string statmsg = JsonHandler::getJson("stats", this->p->playerId, 0);
     this->wsm->sendMessage(statmsg);
     auto ed = ax::Director::getInstance()->getEventDispatcher();
-//    ed->dispatchCustomEvent("stats");
-    
-    
+
 }
+
+
 ServerDriver:: ~ServerDriver() {
     AXLOG("*************ServerDriver destroyed*****************");
 }

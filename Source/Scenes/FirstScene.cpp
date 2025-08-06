@@ -32,20 +32,20 @@ bool FirstScene::init()
         this->addChild(background, -1);
     }
 
-    auto startButton1 = ui::Button::create("play.png");
+    auto playButton = ui::Button::create("play.png");
     
-    startButton1->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 ));
+    playButton->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2 ));
     
-    startButton1->addClickEventListener([](Object* sender) {
+    playButton->addClickEventListener([](Object* sender) {
         printf("change event fired");
         auto dir = Director:: getInstance();
         auto ss = StartScene:: create();
 //        BotAlgorithm* minimax =  new MiniMax(6,7);
 //        ms->setGameDriver( new BotDriver(minimax));
-        dir->replaceScene(ss);
+        dir->pushScene(ss);
         
     });
-    this->addChild(startButton1,2);
+    this->addChild(playButton,2);
     return true;
 }
 void FirstScene::update(float dt)

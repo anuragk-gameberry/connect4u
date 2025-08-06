@@ -45,8 +45,8 @@ PlayerLeftPopup* PlayerLeftPopup :: create (){
     auto backbtn = ui::Button:: create("replay.png");
     backbtn->addClickEventListener ([](Object* sender){
         auto dir = Director:: getInstance();
-        auto ss = StartScene:: create();
-        dir->replaceScene(ss);
+//        auto ss = StartScene:: create();
+        dir->popScene();
     });
     backbtn->setPosition(Vec2(visibleSize.width/2, visibleSize.height*0.2f));
     backbtn->setScale(0.5f);
